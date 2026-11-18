@@ -1,10 +1,10 @@
 # Employee Support Ticket Management App — Specification
 
-**Status:** Draft for review  
-**Version:** 1.1  
+**Status:** Approved  
+**Version:** 1.2  
 **Date:** 18 Nov 2026
 
-This document is the product specification. It records the approved requirements and the decisions confirmed on 18 Nov 2026, including storage-failure handling and plain-text rendering. It does not describe an implementation plan or application code.
+This document is the product specification. It records the approved requirements and the decisions confirmed on 18 Nov 2026, including storage-failure handling, plain-text rendering, and the React, Vite, Tailwind CSS, Lucide React, React Router, Vitest, and React Testing Library frontend. It does not describe an implementation plan or application code.
 
 ## 1. Purpose
 
@@ -14,9 +14,23 @@ The application is a small lab demonstration. It shows the ticket lifecycle from
 
 ## 2. Scope
 
-The application is a client-side web app built with HTML, CSS, and JavaScript. It runs in the browser. It stores data in `localStorage`. It does not use a backend, a database server, accounts, or external company systems.
+The application is a client-side React application written in JavaScript with JSX. Vite provides the development server and the production build. Tailwind CSS provides the styling. Lucide React provides icons. React Router's HashRouter provides the routes in section 2.1. The application stores data in `localStorage`. It does not use a backend, a database server, accounts, or external company systems. Automated tests use Vitest and React Testing Library.
 
 People choose a fictional user from a demonstration role switcher. The switcher is labeled as a demonstration. It is not authentication and it is not server-side authorization.
+
+### 2.1 Routes
+
+| Hash | Who can use it | Screen |
+|---|---|---|
+| `#/dashboard` | Ravi and Priya | Employee dashboard |
+| `#/dashboard` | Alex | Support-staff dashboard |
+| `#/tickets/new` | Ravi and Priya | Submission form |
+| `#/tickets/new` | Alex | Redirect to `#/dashboard` |
+| `#/tickets/<id>` | A user allowed to view that ticket | Ticket detail |
+| `#/tickets/<id>` | Anyone else | Redirect to `#/dashboard` |
+| `#/tickets/<id>/edit` | Owning employee, status Open, In Progress, or Resolved | Edit form |
+| `#/tickets/<id>/edit` | Anyone else, and the owner when the ticket is Closed | Redirect to `#/dashboard` |
+| Any other hash | Any user | Redirect to `#/dashboard` |
 
 ## 3. Demonstration users
 
@@ -42,7 +56,7 @@ Employees submit tickets only as themselves. Alex does not submit tickets and do
 
 ## 4. Screens
 
-The app has five screens.
+The app has five screens. The hash for each screen is defined in section 2.1.
 
 ### 4.1 Employee dashboard
 
@@ -280,11 +294,15 @@ Form controls have visible labels. Status and priority are written as words. Col
 
 The demonstration notice stays visible with the role switcher.
 
+Tailwind CSS implements this layout with mobile-first utilities. Lucide icons may sit beside an action or a status. The visible words remain the labels: an icon does not replace the status name, the priority name, or the demonstration notice.
+
 ### 12.1 Safe rendering
 
 Ticket titles, descriptions, and comment text are user-provided. Everywhere they appear, including dashboards, detail, comments, and form values, the app shows them as plain text.
 
 The app does not interpret those strings as HTML or run them as JavaScript. It does not insert them through HTML markup. Characters such as `<`, `>`, `&`, quotes, and text that looks like a tag or a script remain visible as characters.
+
+In the React interface, those strings are rendered as React text content. The application does not pass them through `dangerouslySetInnerHTML` or any other HTML parser.
 
 ## 13. Out of scope
 
